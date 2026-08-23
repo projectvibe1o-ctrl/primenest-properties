@@ -1,6 +1,6 @@
-# PrimeNest image repair
+# Webora WhatsApp CTA
 
-- [x] Trace which image URLs fail outside the Manus preview.
-- [x] Copy the generated assets into a Vercel-safe static asset directory.
-- [x] Update the frontend image references and verify all images load.
-- [ ] Commit and push the image repair to GitHub.
+- [x] Inspect the existing footer and check whether an official Webora URL exists in the project.
+- [x] Add the subtle Webora lead CTA and footer credit.
+- [x] Test responsive rendering, WhatsApp URL, and production build.
+- [ ] Commit with the requested message and push to GitHub.
