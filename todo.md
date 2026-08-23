@@ -1,6 +1,6 @@
-# PrimeNest server fix
+# PrimeNest image repair
 
-- [x] Inspect package scripts and deployment configuration.
-- [x] Patch the server entrypoint for Vercel-compatible routing and startup.
-- [x] Run TypeScript validation and production build.
-- [ ] Save a new checkpoint and report the fix.
+- [x] Trace which image URLs fail outside the Manus preview.
+- [x] Copy the generated assets into a Vercel-safe static asset directory.
+- [x] Update the frontend image references and verify all images load.
+- [ ] Commit and push the image repair to GitHub.

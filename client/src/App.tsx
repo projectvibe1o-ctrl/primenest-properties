@@ -5,11 +5,11 @@ import { ArrowUpRight, BedDouble, Building2, ChevronDown, Home as HomeIcon, MapP
 import { toast } from 'sonner';
 
 const assets = {
-  hero: '/manus-storage/primenest-hero_77511ceb.png',
-  courtyard: '/manus-storage/primenest-property-courtyard_05c6fb77.png',
-  apartment: '/manus-storage/primenest-property-apartment_f329744a.png',
-  villa: '/manus-storage/primenest-property-villa_51b31e49.png',
-  mark: '/manus-storage/primenest-mark_4f3a417b.png',
+  hero: '/assets/primenest-hero.webp',
+  courtyard: '/assets/primenest-property-courtyard.webp',
+  apartment: '/assets/primenest-property-apartment.webp',
+  villa: '/assets/primenest-property-villa.webp',
+  mark: '/assets/primenest-mark.png',
 };
 
 const properties = [
