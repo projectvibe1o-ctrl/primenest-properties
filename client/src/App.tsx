@@ -1,42 +1,78 @@
-import { Toaster } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import NotFound from "@/pages/NotFound";
-import { Route, Switch } from "wouter";
-import ErrorBoundary from "./components/ErrorBoundary";
-import { ThemeProvider } from "./contexts/ThemeContext";
-import Home from "./pages/Home";
+/* Lahore Editorial direction: photography-first hierarchy, paper-and-ink palette, restrained bronze accents, transparent demo language. */
+import { useMemo, useState } from 'react';
+import { Route, Switch, Link } from 'wouter';
+import { ArrowUpRight, BedDouble, Building2, ChevronDown, Home as HomeIcon, MapPin, Menu, MessageCircle, Search, ShieldCheck, Sparkles, X } from 'lucide-react';
+import { toast } from 'sonner';
 
+const assets = {
+  hero: '/manus-storage/primenest-hero_77511ceb.png',
+  courtyard: '/manus-storage/primenest-property-courtyard_05c6fb77.png',
+  apartment: '/manus-storage/primenest-property-apartment_f329744a.png',
+  villa: '/manus-storage/primenest-property-villa_51b31e49.png',
+  mark: '/manus-storage/primenest-mark_4f3a417b.png',
+};
 
-function Router() {
-  return (
-    <Switch>
-      <Route path={"/"} component={Home} />
-      <Route path={"/404"} component={NotFound} />
-      {/* Final fallback route */}
-      <Route component={NotFound} />
-    </Switch>
-  );
+const properties = [
+  { id: 1, title: 'The Courtyard House', area: 'Gulberg III, Lahore', type: 'House', beds: 4, baths: 4, size: '3,200 sq ft', price: 'PKR 8.9 Cr', image: assets.courtyard, tag: 'Concept property' },
+  { id: 2, title: 'The Meridian Apartment', area: 'DHA Phase 5, Lahore', type: 'Apartment', beds: 3, baths: 3, size: '1,850 sq ft', price: 'PKR 4.75 Cr', image: assets.apartment, tag: 'Concept property' },
+  { id: 3, title: 'The Limestone Villa', area: 'Lake City, Lahore', type: 'Villa', beds: 5, baths: 6, size: '4,600 sq ft', price: 'PKR 12.5 Cr', image: assets.villa, tag: 'Concept property' },
+];
+
+const navItems = [['Properties', '#properties'], ['Buy', '#search'], ['Rent', '#categories'], ['Agents', '#agent'], ['About', '#about'], ['FAQ', '#faq']];
+
+function DemoNotice() {
+  return <div className="bg-[#12202b] px-4 py-2 text-center text-[11px] font-extrabold uppercase tracking-[.18em] text-[#f6f2ea]">Concept website · All properties, people and details shown are fictional demo content</div>;
 }
 
-// NOTE: About Theme
-// - First choose a default theme according to your design style (dark or light bg), than change color palette in index.css
-//   to keep consistent foreground/background color across components
-// - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
-
-function App() {
-  return (
-    <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="light"
-        // switchable
-      >
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
-      </ThemeProvider>
-    </ErrorBoundary>
-  );
+function Header() {
+  const [open, setOpen] = useState(false);
+  return <>
+    <header className="sticky top-0 z-50 border-b border-[#12202b]/10 bg-[#f6f2ea]/95 backdrop-blur-md">
+      <div className="container flex h-[76px] items-center justify-between gap-5">
+        <a href="#top" className="flex items-center gap-3" aria-label="PrimeNest Properties home">
+          <img src={assets.mark} alt="" className="h-9 w-9 object-contain" />
+          <span className="leading-none"><span className="block text-[13px] font-extrabold tracking-[.2em] text-[#12202b]">PRIMENEST</span><span className="mt-1 block text-[8px] font-bold tracking-[.28em] text-[#a1814f]">PROPERTIES</span></span>
+        </a>
+        <nav className="hidden items-center gap-7 lg:flex" aria-label="Primary navigation">
+          {navItems.map(([label, href]) => <a key={label} className="text-[12px] font-bold text-[#12202b]/70 transition-colors hover:text-[#a1814f]" href={href}>{label}</a>)}
+        </nav>
+        <a href="https://wa.me/923000000000?text=Hello%20PrimeNest%20Properties" target="_blank" rel="noreferrer" className="interactive hidden items-center gap-2 bg-[#12202b] px-4 py-3 text-[11px] font-extrabold uppercase tracking-[.12em] text-[#f6f2ea] hover:bg-[#263d49] sm:flex"><MessageCircle size={15} /> WhatsApp us</a>
+        <button className="rounded-sm p-2 lg:hidden" aria-label={open ? 'Close menu' : 'Open menu'} onClick={() => setOpen(!open)}>{open ? <X /> : <Menu />}</button>
+      </div>
+      {open && <nav className="border-t border-[#12202b]/10 bg-[#f6f2ea] px-5 py-5 lg:hidden" aria-label="Mobile navigation">{navItems.map(([label, href]) => <a key={label} onClick={() => setOpen(false)} className="block border-b border-[#12202b]/10 py-4 text-sm font-bold" href={href}>{label}</a>)}<a className="mt-4 inline-flex items-center gap-2 bg-[#12202b] px-4 py-3 text-xs font-bold uppercase tracking-wider text-[#f6f2ea]" href="https://wa.me/923000000000"><MessageCircle size={15} /> WhatsApp us</a></nav>}
+    </header>
+  </>;
 }
 
+function SearchPanel() {
+  const [mode, setMode] = useState('Buy');
+  const [location, setLocation] = useState('Lahore');
+  const [type, setType] = useState('Any property type');
+  const handleSearch = () => toast.success(`${mode} search ready`, { description: `Showing concept listings around ${location}.` });
+  return <section id="search" className="relative z-10 -mt-12 px-5 sm:px-10"><div className="mx-auto max-w-[1120px] border border-[#12202b]/10 bg-[#f6f2ea] p-4 shadow-[0_24px_70px_rgba(18,32,43,.12)] sm:p-6"><div className="mb-5 flex gap-6 border-b border-[#12202b]/10"><button onClick={() => setMode('Buy')} className={`border-b-2 pb-3 text-xs font-extrabold uppercase tracking-[.16em] ${mode === 'Buy' ? 'border-[#b89561] text-[#12202b]' : 'border-transparent text-[#12202b]/40'}`}>Buy</button><button onClick={() => setMode('Rent')} className={`border-b-2 pb-3 text-xs font-extrabold uppercase tracking-[.16em] ${mode === 'Rent' ? 'border-[#b89561] text-[#12202b]' : 'border-transparent text-[#12202b]/40'}`}>Rent</button></div><div className="grid gap-3 md:grid-cols-[1.2fr_1fr_1fr_auto]"><label className="relative block"><span className="mb-2 block text-[10px] font-extrabold uppercase tracking-wider text-[#12202b]/50">Location</span><MapPin className="absolute bottom-3 left-3 text-[#a1814f]" size={16} /><input value={location} onChange={e => setLocation(e.target.value)} className="h-12 w-full border border-[#12202b]/15 bg-transparent pl-10 pr-3 text-sm font-bold" aria-label="Location" /></label><label className="relative block"><span className="mb-2 block text-[10px] font-extrabold uppercase tracking-wider text-[#12202b]/50">Property type</span><select value={type} onChange={e => setType(e.target.value)} className="h-12 w-full appearance-none border border-[#12202b]/15 bg-transparent px-3 text-sm font-bold"><option>Any property type</option><option>House</option><option>Apartment</option><option>Villa</option></select><ChevronDown className="pointer-events-none absolute bottom-4 right-3" size={15} /></label><label className="relative block"><span className="mb-2 block text-[10px] font-extrabold uppercase tracking-wider text-[#12202b]/50">Budget</span><select className="h-12 w-full appearance-none border border-[#12202b]/15 bg-transparent px-3 text-sm font-bold" aria-label="Budget"><option>Any budget</option><option>Up to PKR 5 Cr</option><option>PKR 5–10 Cr</option><option>PKR 10 Cr+</option></select><ChevronDown className="pointer-events-none absolute bottom-4 right-3" size={15} /></label><button onClick={handleSearch} className="interactive mt-5 flex h-12 items-center justify-center gap-2 bg-[#b89561] px-6 text-xs font-extrabold uppercase tracking-[.12em] text-[#12202b] hover:bg-[#c7aa7d] md:mt-0"><Search size={16} /> Search</button></div></div></section>;
+}
+
+function PropertyCard({ property }: { property: typeof properties[number] }) {
+  return <article className={`property-card group border border-[#12202b]/10 bg-[#fbf8f2] ${property.id === 1 ? 'lg:row-span-2' : ''}`}><div className={`relative overflow-hidden ${property.id === 1 ? 'aspect-[4/3] lg:aspect-[3/4]' : 'aspect-[4/3]'}`}><img className="property-image h-full w-full object-cover" src={property.image} width="800" height="600" loading="lazy" decoding="async" alt={`${property.title} concept listing`} /><span className="absolute left-4 top-4 bg-[#f6f2ea]/95 px-3 py-2 text-[9px] font-extrabold uppercase tracking-[.16em] text-[#12202b]">{property.tag}</span><button onClick={() => toast('Saved for this demo', { description: 'A real website could connect this to a shortlist.' })} className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full bg-[#f6f2ea]/90 text-[#12202b] opacity-0 transition-opacity group-hover:opacity-100" aria-label={`Save ${property.title}`}><Sparkles size={14} /></button></div><div className="p-5 sm:p-6"><div className="mb-4 flex items-start justify-between gap-4"><div><h3 className="display-serif text-[25px] leading-tight text-[#12202b]">{property.title}</h3><p className="mt-2 flex items-center gap-1 text-xs font-semibold text-[#12202b]/55"><MapPin size={13} className="text-[#a1814f]" /> {property.area}</p></div><ArrowUpRight className="shrink-0 text-[#a1814f] transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" size={19} /></div><div className="flex items-center gap-4 border-t border-[#12202b]/10 pt-4 text-[11px] font-bold text-[#12202b]/65"><span className="flex items-center gap-1.5"><BedDouble size={15} /> {property.beds} beds</span><span>{property.baths} baths</span><span>{property.size}</span></div><p className="mt-5 text-lg font-extrabold text-[#12202b]">{property.price}</p></div></article>;
+}
+
+function Home() {
+  const [filter, setFilter] = useState('All');
+  const visible = useMemo(() => filter === 'All' ? properties : properties.filter(p => p.type === filter), [filter]);
+  return <div id="top" className="min-h-screen bg-[#f6f2ea]">
+    <DemoNotice /><Header />
+    <main>
+      <section className="relative min-h-[650px] overflow-hidden bg-[#e1e8e1] text-[#12202b]"><img src={assets.hero} alt="Contemporary Lahore residence with a shaded courtyard" width="1600" height="900" loading="eager" fetchPriority="high" decoding="async" className="absolute right-0 top-0 h-full w-full object-cover opacity-100 md:w-[59%]" /><div className="absolute inset-0 bg-gradient-to-r from-[#e1e8e1] via-[#e1e8e1]/90 via-45% to-transparent md:from-[#e1e8e1] md:via-[#e1e8e1]/88 md:via-42% md:to-transparent" /><div className="container relative flex min-h-[650px] items-end pb-20 pt-24 sm:pb-28"><div className="max-w-[690px]"><p className="eyebrow mb-7 text-[#d9bc8b]">Lahore · Property, considered</p><h1 className="display-serif max-w-[690px] text-[clamp(3.3rem,8vw,7rem)] leading-[.92] tracking-[-.035em]">Find your place.<br /><em className="font-normal text-[#d9bc8b]">Find your future.</em></h1><p className="mt-8 max-w-[445px] text-[15px] leading-7 text-[#12202b]/68">A considered way to discover homes, apartments, and investment spaces across Lahore. Browse the concept collection and imagine what's next.</p><div className="mt-9 flex flex-wrap gap-3"><a href="#properties" className="interactive inline-flex items-center gap-2 bg-[#b89561] px-5 py-3.5 text-xs font-extrabold uppercase tracking-[.12em] text-[#12202b] hover:bg-[#c7aa7d]">Explore properties <ArrowUpRight size={16} /></a><a href="#about" className="interactive inline-flex items-center gap-2 border border-[#12202b]/30 px-5 py-3.5 text-xs font-extrabold uppercase tracking-[.12em] text-[#12202b] hover:border-[#a1814f] hover:text-[#a1814f]">Why PrimeNest</a></div></div></div><div className="absolute bottom-7 right-8 hidden items-center gap-3 text-[10px] font-extrabold uppercase tracking-[.2em] text-[#12202b]/55 lg:flex"><span className="h-px w-12 bg-[#a1814f]/60" /> Scroll to explore</div></section>
+      <SearchPanel />
+      <section id="properties" className="container py-24 sm:py-32"><div className="mb-12 flex flex-col justify-between gap-7 md:flex-row md:items-end"><div><p className="eyebrow">The collection</p><h2 className="display-serif mt-5 max-w-[480px] text-5xl leading-[.98] tracking-[-.025em] sm:text-6xl">Spaces with a sense of place.</h2></div><div className="max-w-[290px] text-sm leading-6 text-[#12202b]/60">A small selection of fictional demo listings, designed to show how PrimeNest could help people browse with confidence.</div></div><div className="mb-8 flex flex-wrap gap-2">{['All', 'House', 'Apartment', 'Villa'].map(item => <button key={item} onClick={() => setFilter(item)} className={`interactive border px-4 py-2 text-[10px] font-extrabold uppercase tracking-[.15em] ${filter === item ? 'border-[#12202b] bg-[#12202b] text-[#f6f2ea]' : 'border-[#12202b]/20 text-[#12202b]/60 hover:border-[#b89561] hover:text-[#12202b]'}`}>{item}</button>)}</div><div className="grid gap-5 lg:grid-cols-[1.25fr_.85fr_.85fr] lg:items-start">{visible.map(property => <PropertyCard key={property.id} property={property} />)}</div></section>
+      <section id="categories" className="paper-grain border-y border-[#12202b]/10 bg-[#e1e8e1] py-24 sm:py-32"><div className="container"><div className="grid gap-14 lg:grid-cols-[.7fr_1.3fr] lg:items-end"><div><p className="eyebrow">Find your fit</p><h2 className="display-serif mt-5 text-5xl leading-[.98] sm:text-6xl">A property search with room to breathe.</h2></div><div className="grid gap-0 sm:grid-cols-3">{[['01', 'Homes', 'Thoughtful houses for the everyday and the exceptional.', HomeIcon], ['02', 'Apartments', 'City living with a little more intention.', Building2], ['03', 'Commercial', 'Spaces ready for the next chapter of business.', Sparkles]].map(([n, title, copy, Icon]) => <button key={title as string} onClick={() => toast(`${title} collection`, { description: 'This demo category is ready for a real listing feed.' })} className="group border-t border-[#12202b]/20 p-5 text-left transition-colors hover:bg-[#f6f2ea]/50 sm:border-l sm:border-t-0"><span className="text-[10px] font-extrabold tracking-[.16em] text-[#a1814f]">{n as string}</span><Icon className="my-10 text-[#12202b]/45 transition-colors group-hover:text-[#a1814f]" size={25} /><h3 className="text-lg font-extrabold">{title as string}</h3><p className="mt-3 text-xs leading-5 text-[#12202b]/60">{copy as string}</p><ArrowUpRight className="mt-8 text-[#a1814f]" size={17} /></button>)}</div></div></div></section>
+      <section id="about" className="container py-24 sm:py-32"><div className="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:items-center"><div><p className="eyebrow">Why PrimeNest</p><h2 className="display-serif mt-5 max-w-[530px] text-5xl leading-[.98] sm:text-6xl">Clarity is the new luxury.</h2><p className="mt-8 max-w-[470px] text-[15px] leading-7 text-[#12202b]/65">The best property journey starts before the viewing. PrimeNest brings the right details forward, so the process feels human, informed, and quietly confident.</p><div className="mt-10 space-y-5">{[['01', 'A considered shortlist', 'Less noise, better-fit spaces, and information that helps you decide.'], ['02', 'Local context', 'A Lahore-first lens on the areas, rhythms, and details that shape a home.'], ['03', 'A human next step', 'When you are ready, one clear WhatsApp conversation gets you moving.']].map(([n, title, copy]) => <div key={n} className="flex gap-4 border-t border-[#12202b]/10 pt-4"><span className="text-[10px] font-extrabold tracking-[.16em] text-[#a1814f]">{n}</span><div><h3 className="text-sm font-extrabold">{title}</h3><p className="mt-1 text-xs leading-5 text-[#12202b]/60">{copy}</p></div></div>)}</div></div><div className="relative min-h-[420px] bg-[#12202b] p-8 text-[#f6f2ea] sm:p-12"><div className="absolute inset-0 opacity-20" style={{ backgroundImage: `url(${assets.courtyard})`, backgroundSize: 'cover', backgroundPosition: 'center' }} /><div className="relative flex h-full min-h-[355px] flex-col justify-between"><img src={assets.mark} alt="" className="h-14 w-14 object-contain brightness-0 invert opacity-90" /><div><p className="display-serif max-w-[390px] text-4xl leading-[1.02] sm:text-5xl">Make space for what matters.</p><p className="mt-5 max-w-[310px] text-sm leading-6 text-[#f6f2ea]/65">PrimeNest Properties is a fictional concept website created for Webora's portfolio.</p></div></div></div></div></section>
+      <section id="agent" className="bg-[#12202b] py-20 text-[#f6f2ea] sm:py-24"><div className="container flex flex-col items-start justify-between gap-9 md:flex-row md:items-center"><div><p className="eyebrow text-[#d9bc8b]">Your next conversation</p><h2 className="display-serif mt-5 max-w-[600px] text-5xl leading-[.98] sm:text-6xl">Have a place in mind?</h2><p className="mt-5 max-w-[410px] text-sm leading-6 text-[#f6f2ea]/65">Tell us what you are looking for. This demo flow opens a WhatsApp inquiry and does not submit any real property request.</p></div><a href="https://wa.me/923000000000?text=Hello%20PrimeNest%20Properties%2C%20I%27d%20like%20to%20explore%20a%20property." target="_blank" rel="noreferrer" className="interactive inline-flex items-center gap-3 bg-[#b89561] px-6 py-4 text-xs font-extrabold uppercase tracking-[.12em] text-[#12202b] hover:bg-[#c7aa7d]">Start a conversation <MessageCircle size={17} /></a></div></section>
+      <section id="faq" className="container py-24 sm:py-28"><div className="grid gap-12 md:grid-cols-[.7fr_1.3fr]"><div><p className="eyebrow">Good to know</p><h2 className="display-serif mt-5 text-5xl leading-[.98]">Questions, answered.</h2></div><div className="divide-y divide-[#12202b]/15">{[['Is PrimeNest a real agency?', 'No. This is a fictional concept website built to demonstrate a premium Pakistani real-estate experience.'], ['Can I enquire about a listing?', 'The WhatsApp button is a demo interaction. No real listing, availability, owner, agent, or transaction is represented here.'], ['What would happen in a live version?', 'A real implementation could connect the search, shortlist, and WhatsApp flow to an agency\'s own verified listing data.']].map(([q, a]) => <details key={q} className="group py-5"><summary className="flex cursor-pointer list-none items-center justify-between gap-5 text-sm font-extrabold">{q}<ChevronDown size={18} className="transition-transform group-open:rotate-180" /></summary><p className="mt-3 max-w-[650px] text-sm leading-6 text-[#12202b]/60">{a}</p></details>)}</div></div></section>
+    </main>
+    <footer className="border-t border-[#12202b]/10 bg-[#f0ebe2] py-12"><div className="container flex flex-col justify-between gap-10 md:flex-row"><div><div className="flex items-center gap-3"><img src={assets.mark} alt="" className="h-12 w-12 object-contain" /><span className="text-[13px] font-extrabold tracking-[.2em]">PRIMENEST</span></div><p className="mt-4 max-w-[300px] text-xs leading-5 text-[#12202b]/55">Find Your Place. Find Your Future.<br />A fictional Webora portfolio concept for Lahore, Pakistan.</p></div><div className="grid grid-cols-2 gap-x-12 gap-y-3 text-xs font-bold text-[#12202b]/65"><a href="#properties" className="hover:text-[#a1814f]">Properties</a><a href="#about" className="hover:text-[#a1814f]">About PrimeNest</a><a href="#categories" className="hover:text-[#a1814f]">Buy & rent</a><a href="#faq" className="hover:text-[#a1814f]">FAQ</a></div><div className="text-xs text-[#12202b]/45">© 2026 · Demo project</div></div></footer>
+  </div>;
+}
+
+function App() { return <Switch><Route path="/" component={Home} /><Route><Home /></Route></Switch>; }
 export default App;
